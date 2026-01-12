@@ -1,16 +1,18 @@
 #!/bin/bash
 #SBATCH --qos=regular
-#SBATCH --job-name=wf_2307_5
-#SBATCH --output=wf_2307_5_%A_%a.out
-#SBATCH --error=wf_2307_5_%A_%a.err
+#SBATCH --job-name=wf_2307_3
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
-#SBATCH --time=24:00:00
-#SBATCH --array=1760-2199  # Total tasks = número de líneas en tasks.txt
+#SBATCH --mem=16G
+#SBATCH --time=2:00:00
+#SBATCH --array=2000-2713%100               #total tasks=number of lines in "tasks.txt" - 1 is 2714; up to 50 array tasks at once
 
+
+# Load modules 
 module purge
 module load foss/2019b
 module load Python/3.7.4-GCCcore-8.3.0
@@ -18,23 +20,34 @@ source /scratch/elena/elena_wcsim/build/env_wcsim.sh
 export PYTHONPATH=/scratch/$USER/python-libs:$PYTHONPATH
 
 
+# Parameters
 RUN=2307
 CHUNK_SIZE=250
-OUTDIR=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/waveforms_including_position
-SCRIPT=/scratch/elena/WCTE_DATA_ANALYSIS/WCTE_MC-Data_Validation_with_GAIN_Calibration/save_pmt_waveforms.py
-TASK_FILE=tasks.txt
+OUTDIR=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run${RUN}
+SCRIPT=/scratch/elena/WCTE_recovery/scripts/save_pmt_waveforms.py
+TASK_FILE=/scratch/elena/WCTE_recovery/scripts/tasks.txt
 
 
+mkdir -p $OUTDIR  #make sure output dir exists 
+
+
+# Determine part and chunk
 TASK_ID=${SLURM_ARRAY_TASK_ID}
-
-# Leer part y chunk desde tasks.txt
 read PART CHUNK < <(sed -n "$((TASK_ID+1))p" $TASK_FILE)
 
-echo "Processing run=$RUN part=$PART chunk=$CHUNK"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Running run=${RUN} part=${PART} chunk=${CHUNK}"
+echo "TASK_ID=${TASK_ID}, LINE=$(sed -n "$((TASK_ID+1))p" $TASK_FILE)"
 
+
+# run Python script 
 python3 $SCRIPT \
     --run $RUN \
     --part $PART \
     --chunk-id $CHUNK \
     --chunk-size $CHUNK_SIZE \
-    --outdir $OUTDIR
+    --outdir $OUTDIR \
+    --base-path /scratch/elena/WCTE_recovery/PMTs_calib_root_files \
+    --verbose
+
+
+echo "Task finished: run=${RUN} part=${PART} chunk=${CHUNK}"

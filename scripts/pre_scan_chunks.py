@@ -8,17 +8,21 @@ import json
 RUN = 2307
 CHUNK_SIZE = 250
 TREE_NAME = "WCTEReadoutWindows"
-ROOT_DIR = "/scratch/elena/WCTE_DATA_ANALYSIS/WCTE_MC-Data_Validation_with_GAIN_Calibration/root_files"
-EXCLUDE_PARTS = [0, 1]   # ya procesados
+ROOT_DIR = "/dipc/elena/WCTE_2025_commissioning/root_files/PMTs_calib"
 OUTPUT_JSON = "chunks_per_part.json"
 # -------------------------------------
 
 parts = {}
 
-for fname in sorted(glob.glob(f"{ROOT_DIR}/WCTE_offline_R{RUN}S0P*.root")):
+# Find all ROOT files for this run
+root_files = sorted(glob.glob(f"{ROOT_DIR}/WCTE_offline_R{RUN}S0P*.root"))
+print(f"Found {len(root_files)} ROOT files for run {RUN}:")
+for f in root_files:
+    print("  ", f)
+
+# Process each part
+for fname in root_files:
     part = int(fname.split("P")[-1].split(".")[0])
-    if part in EXCLUDE_PARTS:
-        continue
 
     with uproot.open(f"{fname}:{TREE_NAME}") as tree:
         n_events = tree.num_entries
@@ -27,8 +31,8 @@ for fname in sorted(glob.glob(f"{ROOT_DIR}/WCTE_offline_R{RUN}S0P*.root")):
     parts[part] = n_chunks
     print(f"Part {part}: {n_events} events → {n_chunks} chunks")
 
-# Guardar en JSON
+# Save JSON with number of chunks per part
 with open(OUTPUT_JSON, "w") as f:
     json.dump(parts, f, indent=2)
 
-print(f"\nPre-scan completo. Resultados guardados en {OUTPUT_JSON}")
+print(f"\nPre-scan complete. Results saved in {OUTPUT_JSON}")

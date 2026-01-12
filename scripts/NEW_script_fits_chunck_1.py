@@ -6,11 +6,11 @@ import fnmatch
 from scipy.stats import norm, gaussian_kde
 from scipy.optimize import minimize, curve_fit
 from scipy.signal import argrelextrema
+import json
 
 # ----------------- ARGPARSE -----------------
 parser = argparse.ArgumentParser(description="Two-step Gaussian fit for PMTs (batch mode)")
-parser.add_argument("--pattern", type=str, default="*_merge.npz",
-                    help="Pattern to select PMT files, e.g., '*part0_combined.npz'")
+parser.add_argument("--pattern", type=str, default="card*_slot*_ch*_pos*.npz")
 parser.add_argument("--chunk-id", type=int, default=0, help="Index of the PMT chunk to process (0,1,2,...)")
 parser.add_argument("--chunk-size", type=int, default=100, help="Number of PMTs per job")
 args = parser.parse_args()
@@ -18,7 +18,9 @@ chunk_id = args.chunk_id
 chunk_size = args.chunk_size
 
 # ----------------- DIRECTORIES -----------------
-signal_dir = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/waveforms_including_position"
+signal_dir = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307"
+out_dir    = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/results"
+os.makedirs(out_dir, exist_ok=True)
 
 signal_files = [
     f for f in os.listdir(signal_dir)
@@ -307,8 +309,11 @@ dtype = np.dtype([
     ('chi2ndof_spe','f8')
 ])
 results_array = np.array(results_list, dtype=dtype)
-out_dir = "/scratch/elena/WCTE_DATA_ANALYSIS/WCTE_MC-Data_Validation_with_GAIN_Calibration"
-os.makedirs(out_dir, exist_ok=True)
-np.savez(os.path.join(out_dir, f"High_statistics_run2307_chunk{chunk_id}.npz"), results=results_array)
+np.savez(os.path.join(out_dir, f"Final_run2307_chunk{chunk_id}.npz"), results=results_array)
+
+# ----------------- SAVE FAILED PMTs -----------------
+failed_file = os.path.join(out_dir, f"failed_pmts_run2307_chunk{chunk_id}.json")
+with open(failed_file, "w") as f:
+    json.dump(failed_pmts, f, indent=2)
 
 print(f"Done. Processed PMTs {start_idx}..{end_idx-1}. Failed PMTs: {len(failed_pmts)}")
