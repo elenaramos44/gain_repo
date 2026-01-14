@@ -16,7 +16,7 @@ source /scratch/elena/elena_wcsim/build/env_wcsim.sh
 
 
 #----------------- RUN PYTHON SCRIPT -----------------
-python3 /scratch/elena/WCTE_recovery/scripts/NEW_script_fits_chunck_1.py \
+python3 /scratch/elena/WCTE_recovery/scripts/script_all_pmts.py \
     --pattern "card*_slot*_ch*_pos*.npz" \
     --chunk-id ${SLURM_ARRAY_TASK_ID} \
     --chunk-size 100

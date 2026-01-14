@@ -24,7 +24,7 @@ os.makedirs(out_dir, exist_ok=True)
 
 signal_files = [
     f for f in os.listdir(signal_dir)
-    if fnmatch.fnmatch(f, args.pattern)
+    if fnmatch.fnmatch(f, args.pattern) and "_part" not in f
 ]
 
 pmts_all = sorted([f.replace(".npz", "") for f in signal_files])

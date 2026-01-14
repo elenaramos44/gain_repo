@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --qos=regular
-#SBATCH --job-name=wf_2307_3
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.err
+#SBATCH --job-name=wf_2307_1
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_1_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_1_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
 #SBATCH --time=2:00:00
-#SBATCH --array=2000-2713%100               #total tasks=number of lines in "tasks.txt" - 1 is 2714; up to 50 array tasks at once
+#SBATCH --array=0-999%100               #total tasks=number of lines in "tasks.txt" - 1 is 2714; up to 50 array tasks at once
 
 
 # Load modules 
