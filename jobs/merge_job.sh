@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=merge_wf_2307
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/merge_wf_2307_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/merge_wf_2307_%A_%a.err
+#SBATCH --job-name=merge_wf_2308
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2308/logs/merge_wf_2308_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2308/logs/merge_wf_2308_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -13,7 +13,7 @@
 module purge
 module load Python/3.7.4-GCCcore-8.3.0
 
-FOLDER="/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307"
+FOLDER="/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2308"
 PMT_JSON="$FOLDER/pmts_list.json"
 
 PMTS_PER_JOB=200

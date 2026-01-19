@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --qos=regular
-#SBATCH --job-name=final_fit_2307
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/final_fit_2307_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/final_fit_2307_%A_%a.err
+#SBATCH --job-name=final_fit_2308
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/final_fit_2308_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/final_fit_2308_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

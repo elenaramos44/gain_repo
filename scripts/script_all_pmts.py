@@ -18,8 +18,8 @@ chunk_id = args.chunk_id
 chunk_size = args.chunk_size
 
 # ----------------- DIRECTORIES -----------------
-signal_dir = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307"
-out_dir    = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/results"
+signal_dir = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2308"
+out_dir    = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2308/results"
 os.makedirs(out_dir, exist_ok=True)
 
 signal_files = [
@@ -236,9 +236,9 @@ dtype = np.dtype([
     ('fit_failed','?')
 ])
 results_array = np.array(results_list, dtype=dtype)
-np.savez(os.path.join(out_dir, f"Final_run2307_chunk{chunk_id}.npz"), results=results_array)
+np.savez(os.path.join(out_dir, f"Final_run2308_chunk{chunk_id}.npz"), results=results_array)
 
-failed_file = os.path.join(out_dir, f"failed_pmts_run2307_chunk{chunk_id}.json")
+failed_file = os.path.join(out_dir, f"failed_pmts_run2308_chunk{chunk_id}.json")
 with open(failed_file,"w") as f: json.dump(failed_pmts,f,indent=2)
 
 print(f"Done. Processed PMTs {start_idx}..{end_idx-1}. Failed PMTs: {len(failed_pmts)}")

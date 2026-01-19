@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import glob
 import json
@@ -16,7 +17,7 @@ def load_root_part(run_number, part=None, chunk_id=None, chunk_size=10,
     Supports optional chunking by chunk_id and chunk_size.
     """
     if base_path is None:
-        base_path = "/scratch/elena/WCTE_recovery/PMTs_calib_root_files"
+        raise ValueError("[ERROR] base_path must be provided!")
 
     if part is not None:
         pattern = os.path.join(base_path, f"WCTE_offline_R{run_number}S0P{part}.root")
@@ -29,7 +30,7 @@ def load_root_part(run_number, part=None, chunk_id=None, chunk_size=10,
         raise FileNotFoundError(f"No ROOT files found for pattern: {pattern}")
 
     if verbose:
-        print(f"[INFO] Found {len(files)} ROOT files for run {run_number}.")
+        print(f"[INFO] Found {len(files)} ROOT files for run {run_number} in {base_path}.")
 
     arrays = []
     for f in files:
@@ -83,15 +84,23 @@ def load_root_part(run_number, part=None, chunk_id=None, chunk_size=10,
 
 
 def process_and_save(run_number, outdir, part=None, chunk_id=None, chunk_size=10,
-                     max_events=None, verbose=False, quiet=False):
+                     max_events=None, verbose=False, quiet=False, base_path=None):
     """
     Load ROOT part(s), subtract baseline, group waveforms per PMT, save compressed NPZs.
     """
     if verbose:
         print(f"[INFO] Processing run {run_number}, part={part}, chunk={chunk_id}")
 
-    data = load_root_part(run_number, part=part, chunk_id=chunk_id, chunk_size=chunk_size,
-                          max_events=max_events, verbose=verbose, quiet=quiet)
+    data = load_root_part(
+        run_number, 
+        part=part, 
+        chunk_id=chunk_id, 
+        chunk_size=chunk_size,
+        max_events=max_events, 
+        verbose=verbose, 
+        quiet=quiet,
+        base_path=base_path
+    )
 
     if len(data) == 0:
         if not quiet:
@@ -152,7 +161,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Process and save PMT waveforms from ROOT files")
-    parser.add_argument("--base-path", type=str, default=None, help="Path where ROOT files are located")
+    parser.add_argument("--base-path", type=str, required=True, help="Path where ROOT files are located")
     parser.add_argument("--run", type=int, required=True)
     parser.add_argument("--outdir", type=str, required=True)
     parser.add_argument("--part", type=int, default=None, help="Part number (P0, P1, ...)")
@@ -172,5 +181,6 @@ if __name__ == "__main__":
         chunk_size=args.chunk_size,
         max_events=args.max_events,
         verbose=args.verbose,
-        quiet=args.quiet
+        quiet=args.quiet,
+        base_path=args.base_path
     )
