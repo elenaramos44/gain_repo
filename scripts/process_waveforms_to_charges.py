@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-STEP 1: Process waveform NPZ files and extract charges, pulse_ratio, and mu_pe.
+STEP 1: Process waveform npz files and extract charges, pulse_ratio, and mu_pe.
 This script does pulse finding and integrated charge calculation only.
-The output is NPZ per PMT, used later for fitting in STEP 2.
+The output is npz per PMT, used later for fitting in STEP 2.
 """
 
 import os
@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 import fnmatch
 
-# ----------------- ARGPARSE -----------------
+
 parser = argparse.ArgumentParser(description="Process waveforms into charges (STEP 1)")
 parser.add_argument("--pattern", type=str, default="card*_slot*_ch*_pos*.npz")
 parser.add_argument("--chunk-id", type=int, default=0, help="Index of the PMT chunk to process (0,1,2,...)")
@@ -95,7 +95,7 @@ for idx, pmt_label in enumerate(pmts_all[start_idx:end_idx], start=start_idx):
         pulse_ratio = pulse_count / total_waveforms if total_waveforms > 0 else np.nan
         mu_pe = -np.log(1 - pulse_ratio) if pulse_ratio < 1 else np.nan
 
-        # --- save STEP 1 NPZ ---
+        # --- save STEP 1 npz ---
         outname = os.path.join(out_dir, f"{pmt_label}_charges.npz")
         np.savez_compressed(outname,
                             charges=charges,

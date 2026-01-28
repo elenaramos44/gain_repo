@@ -4,7 +4,7 @@ import json
 import os
 import math
 
-RUN = 2308
+RUN = 2307
 CHUNK_SIZE = 250
 BASE_PATH = "/scratch/elena/WCTE_recovery/PMTs_calib_root_files"
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 STEP 2: Load charges NPZs (from STEP 1) and fit pedestal + SPE gaussians.
-The output is the final results NPZ per chunk.
+The output is the final results npz per chunk.
 """
 
 import os
@@ -13,7 +13,7 @@ from scipy.optimize import minimize, curve_fit
 from scipy.signal import argrelextrema
 import json
 
-# ----------------- ARGPARSE -----------------
+
 parser = argparse.ArgumentParser(description="Fit charges NPZs (STEP 2)")
 parser.add_argument("--pattern", type=str, default="card*_slot*_ch*_pos*_charges.npz")
 parser.add_argument("--chunk-id", type=int, default=0)
@@ -185,9 +185,9 @@ dtype = np.dtype([
     ('fit_failed','?')
 ])
 results_array = np.array(results_list, dtype=dtype)
-np.savez(os.path.join(out_dir, f"Final_run2306_chunk{chunk_id}.npz"), results=results_array)
+np.savez(os.path.join(out_dir, f"Final_run2307_chunk{chunk_id}.npz"), results=results_array)
 
-failed_file = os.path.join(out_dir, f"failed_pmts_run2306_chunk{chunk_id}.json")
+failed_file = os.path.join(out_dir, f"failed_pmts_run2307_chunk{chunk_id}.json")
 with open(failed_file,"w") as f: json.dump(failed_pmts,f,indent=2)
 
 print(f"Done. Processed PMTs {start_idx}..{end_idx-1}. Failed PMTs: {len(failed_pmts)}")

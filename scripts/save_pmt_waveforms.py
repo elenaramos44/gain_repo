@@ -130,7 +130,7 @@ def process_and_save(run_number, outdir, part=None, chunk_id=None, chunk_size=10
 
     os.makedirs(outdir, exist_ok=True)
 
-    # Save NPZ per PMT
+    # Save npz per PMT
     for pmt_key, wfs in waveforms_per_pmt.items():
         cid, sid, chid, posid = pmt_key
         wfs_array = np.array(wfs, dtype=np.float32)
