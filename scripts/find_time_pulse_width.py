@@ -3,96 +3,71 @@ import os
 import glob
 import json
 import uproot
-import numpy as np
-from datetime import datetime, timedelta  # <-- make sure timedelta is imported
+from datetime import datetime, timedelta
 
 # -----------------------------
 # Configuration
 # -----------------------------
 base_path = "/scratch/elena/WCTE_recovery/PMTs_calib_root_files"
-run_number = 2306
+run_number = 2055
 tree_name = "WCTEReadoutWindows"
 
-# IMPORTANT: adjust if needed
-run_date = "2025-05-20"
+run_date = "2025-05-08"     # <-- fill in
+RUN_START_TIME = "17:03:00"
 
-# Authoritative pulse-width time windows (from shift log)
-PULSE_WINDOWS = {
-    "770ps": ("16:25:00", "16:42:00"),
-    "780ps": ("16:45:00", "17:01:00"),
-    "790ps": ("17:03:00", "17:13:00"),
-}
+# Laser ON window (position 3)
+GOOD_WINDOW = ("17:41:00", "17:51:00")
 
 # -----------------------------
-# Helper functions
+# Helpers
 # -----------------------------
 def parse_time(hms):
     return datetime.strptime(f"{run_date} {hms}", "%Y-%m-%d %H:%M:%S")
 
-parsed_windows = {
-    pw: (parse_time(t0), parse_time(t1))
-    for pw, (t0, t1) in PULSE_WINDOWS.items()
-}
+run_start = parse_time(RUN_START_TIME)
+good_start, good_end = map(parse_time, GOOD_WINDOW)
 
 def part_number_from_filename(f):
-    basename = os.path.basename(f)
-    part_str = basename.split("S0P")[-1].split(".root")[0]
-    return int(part_str)
-
-def assign_pulse_width(start_time):
-    for pw, (t0, t1) in parsed_windows.items():
-        if t0 <= start_time <= t1:
-            return pw
-    return "discard"
+    return int(os.path.basename(f).split("S0P")[-1].split(".root")[0])
 
 # -----------------------------
-# Find all part files
+# Locate ROOT files
 # -----------------------------
 pattern = os.path.join(base_path, f"WCTE_offline_R{run_number}S0P*.root")
-files = glob.glob(pattern)
+files = sorted(glob.glob(pattern), key=part_number_from_filename)
+
 if not files:
-    raise FileNotFoundError(f"No ROOT files found with pattern: {pattern}")
-
-files_sorted = sorted(files, key=part_number_from_filename)
+    raise RuntimeError("No ROOT files found")
 
 # -----------------------------
-# Loop over parts and assign pulse width
+# Classify parts
 # -----------------------------
-part_pulse_width = {}
+part_status = {}
 
-for f in files_sorted:
+for f in files:
     part = f"P{part_number_from_filename(f)}"
 
     with uproot.open(f"{f}:{tree_name}") as tree:
-        # Read first event timestamp from 'window_time' (in ns)
-        times_ns = tree["window_time"].array(entry_start=0, entry_stop=1)
-        start_time_ns = times_ns[0]
-        start_time_s = start_time_ns * 1e-9  # convert ns -> s
+        t_ns = tree["window_time"].array(entry_start=0, entry_stop=1)[0]
+        t_s = t_ns * 1e-9
+        part_start_time = run_start + timedelta(seconds=t_s)
 
-        # Convert to wall-clock datetime
-        # Run start is 16:22:00 according to your log
-        start_time = parse_time("16:22:00") + timedelta(seconds=start_time_s)
+    status = "good" if good_start <= part_start_time <= good_end else "discard"
 
-    pw = assign_pulse_width(start_time)
-    part_pulse_width[part] = {
-        "start_time": start_time.strftime("%H:%M:%S"),
-        "pulse_width": pw
+    part_status[part] = {
+        "start_time": part_start_time.strftime("%H:%M:%S"),
+        "status": status
     }
 
 # -----------------------------
 # Save JSON
 # -----------------------------
-out_json = os.path.join(base_path, f"run{run_number}_part_pulse_widths.json")
+out_json = os.path.join(base_path, f"run{run_number}_good_parts.json")
 with open(out_json, "w") as f:
-    json.dump(part_pulse_width, f, indent=4)
+    json.dump(part_status, f, indent=4)
 
-print(f"[INFO] Pulse width dictionary saved to {out_json}")
+print(f"[INFO] Saved {out_json}")
 
 # Summary
-summary = {}
-for v in part_pulse_width.values():
-    summary[v["pulse_width"]] = summary.get(v["pulse_width"], 0) + 1
-
-print("[SUMMARY]")
-for k, v in summary.items():
-    print(f"  {k}: {v} parts")
+good = sum(v["status"] == "good" for v in part_status.values())
+print(f"[SUMMARY] Good parts: {good} / {len(part_status)}")

@@ -1,15 +1,15 @@
 #!/bin/bash
 #SBATCH --qos=regular
-#SBATCH --job-name=wf_2307_3
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2307_3_%A_%a.err
+#SBATCH --job-name=wf_2055
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2055_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/wf_2055_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
 #SBATCH --time=4:00:00
-#SBATCH --array=2000-2713%100            #total tasks=number of lines in "tasks.txt" - 1 is 2472; up to 50 array tasks at once
+#SBATCH --array=0-16           #total tasks=number of lines in "tasks.txt" - 1 is 2472; up to 50 array tasks at once
 
 
 # Load modules 
@@ -21,11 +21,11 @@ export PYTHONPATH=/scratch/$USER/python-libs:$PYTHONPATH
 
 
 # Parameters
-RUN=2307
+RUN=2055
 CHUNK_SIZE=250
 OUTDIR=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run${RUN}
 SCRIPT=/scratch/elena/WCTE_recovery/scripts/save_pmt_waveforms.py
-TASK_FILE=/scratch/elena/WCTE_recovery/scripts/tasks.txt
+TASK_FILE=/scratch/elena/WCTE_recovery/scripts/tasks_run2055.txt
 
 
 mkdir -p $OUTDIR  #make sure output dir exists 
@@ -46,7 +46,7 @@ python3 $SCRIPT \
     --chunk-id $CHUNK \
     --chunk-size $CHUNK_SIZE \
     --outdir $OUTDIR \
-    --base-path /scratch/elena/WCTE_recovery/PMTs_calib_root_files \
+    --base-path /scratch/elena/WCTE_recovery/PMTs_calib_root_files/good \
     --verbose
 
 

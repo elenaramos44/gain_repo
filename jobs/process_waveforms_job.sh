@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=step1_wf_2307
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/step1_wf_2307_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/step1_wf_2307_%A_%a.err
+#SBATCH --job-name=step1_wf_2055
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/step1_wf_2055_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307/logs/step1_wf_2055_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -15,7 +15,7 @@ module purge
 module load Python/3.7.4-GCCcore-8.3.0
 
 # --- Parameters ---
-RUN=2307
+RUN=2055
 CHUNK_SIZE=200  # PMTs per job
 #PULSE_WIDTH=790ps  # Change to 780ps or 790ps as needed
 

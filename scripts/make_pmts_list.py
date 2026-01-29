@@ -5,7 +5,7 @@ import json
 import glob
 import re
 
-FOLDER = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2307"
+FOLDER = "/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2055"
 OUTFILE = os.path.join(FOLDER, "pmts_list.json")
 
 pattern = re.compile(

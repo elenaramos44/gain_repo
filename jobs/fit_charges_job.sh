@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=step2_fit_2307
-#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2306/logs/step2_fit_2307_%A_%a.out
-#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2306/logs/step2_fit_2307_%A_%a.err
+#SBATCH --job-name=step2_fit_2055
+#SBATCH --output=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2306/logs/step2_fit_2055_%A_%a.out
+#SBATCH --error=/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run2306/logs/step2_fit_2055_%A_%a.err
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
-#SBATCH --time=5:00:00
+#SBATCH --time=1:00:00
 #SBATCH --array=0-7   # Same as STEP 1: total PMTs / chunk size
 
 # --- Load modules ---
@@ -15,7 +15,7 @@ module purge
 module load Python/3.7.4-GCCcore-8.3.0
 
 # --- Parameters ---
-RUN=2307
+RUN=2055
 CHUNK_SIZE=200
 #PULSE_WIDTH=790ps  # Change accordingly
 IN_DIR="/scratch/elena/WCTE_DATA_ANALYSIS/waveform_npz/run${RUN}/charges"

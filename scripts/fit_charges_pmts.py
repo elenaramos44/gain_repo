@@ -185,9 +185,9 @@ dtype = np.dtype([
     ('fit_failed','?')
 ])
 results_array = np.array(results_list, dtype=dtype)
-np.savez(os.path.join(out_dir, f"Final_run2307_chunk{chunk_id}.npz"), results=results_array)
+np.savez(os.path.join(out_dir, f"Final_run2055_chunk{chunk_id}.npz"), results=results_array)
 
-failed_file = os.path.join(out_dir, f"failed_pmts_run2307_chunk{chunk_id}.json")
+failed_file = os.path.join(out_dir, f"failed_pmts_run2055_chunk{chunk_id}.json")
 with open(failed_file,"w") as f: json.dump(failed_pmts,f,indent=2)
 
 print(f"Done. Processed PMTs {start_idx}..{end_idx-1}. Failed PMTs: {len(failed_pmts)}")
