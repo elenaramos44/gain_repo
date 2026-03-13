@@ -53,7 +53,7 @@ def merge_raw_waveforms(folder, pmts_json, start_idx, end_idx):
     print("[DONE] Merge completed.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Merge raw waveform NPZ files per PMT")
+    parser = argparse.ArgumentParser(description="Merge raw waveform npz files per PMT")
     parser.add_argument("--folder", required=True)
     parser.add_argument("--pmt-json", required=True)
     parser.add_argument("--start", type=int, required=True)

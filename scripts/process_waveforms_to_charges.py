@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """
-STEP 1: Process waveform npz files and extract charges, pulse_ratio, and mu_pe.
-This script does pulse finding and integrated charge calculation only.
-The output is npz per PMT, used later for fitting in STEP 2.
+STEP 1: Process waveform npz files and extract charges and useful parameters.
+Output is npz per PMT, used later for fitting in STEP 2.
 """
 
 import os
 import numpy as np
 import argparse
 import fnmatch
-
 
 parser = argparse.ArgumentParser(description="Process waveforms into charges (STEP 1)")
 parser.add_argument("--pattern", type=str, default="card*_slot*_ch*_pos*.npz")
@@ -34,6 +32,7 @@ start_idx = chunk_id * chunk_size
 end_idx = min(start_idx + chunk_size, len(pmts_all))
 
 # ----------------- WCTE FUNCTIONS -----------------
+
 def do_pulse_finding(waveform):
     threshold = 20
     fIntegralPreceding = 4
@@ -86,16 +85,18 @@ for idx, pmt_label in enumerate(pmts_all[start_idx:end_idx], start=start_idx):
         all_peaks = [do_pulse_finding(wf) for wf in signal_waveforms]
         pulse_mask = np.array([len(p) > 0 for p in all_peaks])
 
-        # --- charge calculation ---
+        #---------------- charge calculation ------------------------------
+        
         charges = np.array([charge_calculation_mPMT_method(wf, (p[0] if len(p) > 0 else int(np.argmax(wf))))
                             for wf,p in zip(signal_waveforms, all_peaks)])
 
+        
         pulse_count = np.sum(pulse_mask)
         total_waveforms = len(signal_waveforms)
         pulse_ratio = pulse_count / total_waveforms if total_waveforms > 0 else np.nan
         mu_pe = -np.log(1 - pulse_ratio) if pulse_ratio < 1 else np.nan
 
-        # --- save STEP 1 npz ---
+        # --- save results ---
         outname = os.path.join(out_dir, f"{pmt_label}_charges.npz")
         np.savez_compressed(outname,
                             charges=charges,

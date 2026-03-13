@@ -13,8 +13,8 @@ def load_root_part(run_number, part=None, chunk_id=None, chunk_size=10,
                    tree_name="WCTEReadoutWindows", max_events=None,
                    base_path=None, verbose=False, quiet=False):
     """
-    Load a single part (or all parts if part=None) of a run from ROOT files.
-    Supports optional chunking by chunk_id and chunk_size.
+    Load a single part (or all parts if part=None) of a run (ROOT files)
+    Optional chunking by chunk_id and chunk_size.
     """
     if base_path is None:
         raise ValueError("[ERROR] base_path must be provided!")
@@ -86,7 +86,7 @@ def load_root_part(run_number, part=None, chunk_id=None, chunk_size=10,
 def process_and_save(run_number, outdir, part=None, chunk_id=None, chunk_size=10,
                      max_events=None, verbose=False, quiet=False, base_path=None):
     """
-    Load ROOT part(s), subtract baseline, group waveforms per PMT, save compressed NPZs.
+    Load ROOT part(s), subtract baseline, group waveforms per PMT, save compressed npz files.
     """
     if verbose:
         print(f"[INFO] Processing run {run_number}, part={part}, chunk={chunk_id}")
@@ -120,7 +120,7 @@ def process_and_save(run_number, outdir, part=None, chunk_id=None, chunk_size=10
         waveforms, card_ids, slot_ids, channel_ids, pos_ids
     ):
         for wf, cid, sid, chid, posid in zip(evt_wfs, evt_cids, evt_sids, evt_chids, evt_posids):
-            if sid == -1 or cid > 120:
+            if sid == -1 or (cid > 120 and cid != 131):   #card 131 --> monitor PMT (ch16??), trigger time (ch0)
                 continue
             pmt_key = (int(cid), int(sid), int(chid), int(posid))
             wf_np = np.array(wf, dtype=np.float32)
